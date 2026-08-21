@@ -1,5 +1,6 @@
 import Navigation from './components/Navigation'
 import Gallery from './components/Gallery'
+import ContactForm from './components/ContactForm'
 
 const photos = [
   {
@@ -74,6 +75,7 @@ const App = () => {
       <Navigation />
       <br />
       <Gallery photos={photos} />
+      <ContactForm />
     </div>
   )
 }
