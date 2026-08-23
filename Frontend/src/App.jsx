@@ -1,6 +1,7 @@
 import Navigation from './components/Navigation'
 import Gallery from './components/Gallery'
 import ContactForm from './components/ContactForm'
+// import Login from './components/Login'
 
 const photos = [
   {
@@ -72,6 +73,7 @@ const photos = [
 const App = () => {
   return (
     <div>
+      {/* <Login /> */}
       <Navigation />
       <br />
       <Gallery photos={photos} />

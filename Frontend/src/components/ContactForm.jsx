@@ -45,53 +45,53 @@ const ContactForm = () => {
             <button onClick={handleReset}>Send Another Request</button>
           </div>
         ) : (
-                <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
-        <div>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Your name..."
-            required
-          />
-        </div>
+          <div>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Your name..."
+              required
+            />
+          </div>
 
-        <div>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="your@email.com"
-            required
-          />
-        </div>
+          <div>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your@email.com"
+              required
+            />
+          </div>
 
-        <div>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Phone Number (optional)"
-          />
-        </div>
+          <div>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Phone Number (optional)"
+            />
+          </div>
 
-        <div>
-          <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            placeholder="Tell us more about your requirements..."
-            rows="6"
-            required
-          />
-        </div>
+          <div>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Tell us more about your requirements..."
+              rows="6"
+              required
+            />
+          </div>
 
-        <button type="submit">Send Request</button>
-      </form>
+          <button type="submit">Send Request</button>
+        </form>
 
         )}
     </div>
