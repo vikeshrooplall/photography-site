@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const TEST_CREDENTIALS = {
   email: 'user@example.com',
@@ -6,6 +7,8 @@ const TEST_CREDENTIALS = {
 }
 
 const Login = () => {
+  const navigate = useNavigate()
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -33,6 +36,7 @@ const Login = () => {
     event.preventDefault()
     setErrorMessage('')
     setSuccessMessage('')
+
     if (!formData.email || !formData.password) {
       setErrorMessage('Please fill in all fields')
       return
@@ -48,6 +52,10 @@ const Login = () => {
         localStorage.setItem('isLoggedIn', 'true')
 
         setFormData({ email: '', password: ''})
+
+        setTimeout(() => {
+          navigate('/admin/dashboard')
+        }, 1500);
 
       } else {
         setErrorMessage('Invalid email or password, please try again.')
