@@ -1,32 +1,23 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-
-const Photo = require('./models/Photo')
-const Contact = require('./models/Contact')
-const User = require('./models/User')
+const morgan= require('morgan')
 
 const connectDB = require('./config/database')
+const photoRoutes = require('./routes/photos')
 
 const app = express()
 
 connectDB()
+
 app.use(cors())
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
+app.use('/api/photos', photoRoutes)
 
-app.get('/api/photos', (request, response) => {
-  Photo.find({}).then(photos => {
-    response.json(photos)
-  })
-})
-
-app.post('/api/contact', (request, response) => {
-})
-
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

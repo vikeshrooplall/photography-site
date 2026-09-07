@@ -30,9 +30,8 @@ const hashPassword = async (user) => {
 userSchema.pre('save', async function(next) {
   try {
     await hashPassword(this)
-    next()
   } catch (error) {
-    next(error)
+    throw(error)
   }
 })
 
