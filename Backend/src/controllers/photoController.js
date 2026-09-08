@@ -1,4 +1,5 @@
 const Photo = require('../models/Photo')
+const upload = require('../middleware/upload')
 
 const getAllPhotos = async (request,response) => {
   try {
@@ -98,10 +99,46 @@ const deletePhoto = async (request, response) => {
   }
 }
 
+const uploadPhoto = async (request, response) => {
+  try {
+    if (!request.file) {
+      return response.status(400).json({ error: 'No file uploaded'})
+    }
+
+    const { title, category, description } = request.body
+
+    if (!title || !category) {
+      return response.status(400).json({
+        error: 'Title and category are required'
+      })
+    }
+
+    const imageUrl = request.file.path
+
+    const photo = await Photo.create({
+      title,
+      category,
+      imageUrl,
+      description: description || ''
+    })
+
+    return response.status(201).json({
+      message: 'Photo uploaded successfully',
+      photo: photo
+    })
+  } catch (error) {
+    console.error('Upload photo Error:', error)
+    return response.status(500).json({
+      error: 'Failed to upload photo'
+    })
+  }
+}
+
 module.exports = {
   getAllPhotos,
   getPhotoById,
   createPhoto,
   updatePhoto,
-  deletePhoto
+  deletePhoto,
+  uploadPhoto
 }
