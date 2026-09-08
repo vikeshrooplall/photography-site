@@ -5,6 +5,7 @@ const morgan= require('morgan')
 
 const connectDB = require('./config/database')
 const photoRoutes = require('./routes/photos')
+const authRoutes = require('./routes/auth')
 
 const app = express()
 
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/photos', photoRoutes)
+app.use('/api/auth', authRoutes)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
