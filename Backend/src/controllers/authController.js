@@ -58,4 +58,39 @@ const verify = async (request, response, next) => {
     return response.status(403).json({ error: 'Invalid or expired token.'})
   }
 }
-module.exports = { login, verify }
+
+const logout = (request, response) => {
+  return response.status(200).json({ message: 'Logged out successfully.'})
+}
+
+const changePassword = async (request, response) => {
+  try {
+    const { currentPassword, newPassword } = request.body
+    const userId = request.user.id
+
+    if (!currentPassword || !newPassword) {
+      return response.status(400).json({ error: 'Current password and new password are required.'})
+    }
+
+    const user = await User.findById(userId).select('+passwordHash')
+
+    if (!user) {
+      return response.status(404).json({ error: 'User not found.'})
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash)
+
+    if (!isMatch) {
+      return response.status(401).json({ error: 'Current password is incorrect.'})
+    }
+
+    user.passwordHash = newPassword
+    await user.save()
+
+    return response.status(200).json({ message: 'Password updated successfully.'})
+  } catch (error) {
+    return response.status(500).json({ error: 'Internal server error'})
+  }
+}
+
+module.exports = { login, verify, logout, changePassword }
