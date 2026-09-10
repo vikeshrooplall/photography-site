@@ -4,22 +4,22 @@ const bcrypt = require('bcrypt')
 
 const login = async (request, response) => {
   try {
-    const { username, password } = request.body
+    const { email, password } = request.body
 
-    if (!username || !password) {
-      return response.status(400).json({ error: 'Username and password are required.'})
+    if (!email || !password) {
+      return response.status(400).json({ error: 'Email and password are required.'})
     }
 
-    const user = await User.findOne({ username }).select('+passwordHash')
+    const user = await User.findOne({ email }).select('+passwordHash')
 
     if (!user) {
-      return response.status(401).json({ error: "Invalid username or password."})
+      return response.status(401).json({ error: "Invalid Email or password."})
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash)
 
     if (!isMatch) {
-      return response.status(401).json({ error: "Invalid username or password."})
+      return response.status(401).json({ error: "Invalid Email or password."})
     }
 
     const token = jwt.sign(

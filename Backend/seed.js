@@ -66,6 +66,7 @@ const samplePhotos = [
 // Admin user data
 const adminUser = {
   username: 'admin',
+  email: 'admin@example.com',
   passwordHash: 'admin123'  // Will be hashed by pre-save hook
 }
 
