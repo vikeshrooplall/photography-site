@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/gallery', label: 'Gallery' },
-  { path: 'contact', label: 'Contact' },
+  { path: '/contact', label: 'Contact' },
   { path: '/about', label: 'About' },
   { path:'admin/login', label: 'Admin' }
 ]

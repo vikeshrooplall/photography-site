@@ -8,6 +8,8 @@ const ContactForm = () => {
     message: ''
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -15,11 +17,36 @@ const ContactForm = () => {
       ...formData,
       [name]: value
     })
+    if (error) setError(null)
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setIsSubmitted(true)
+
+    setError(null)
+    setLoading(true)
+
+    try {
+      const response = await fetch('http://localhost:3001/api/contacts', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to submit request.')
+      }
+
+      setIsSubmitted(true)
+    } catch (err) {
+      setError(err.message)
+      console.error('Error submitting contact form:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleReset = () => {
@@ -30,6 +57,7 @@ const ContactForm = () => {
       message: ''
     })
     setIsSubmitted(false)
+    setError(null)
   }
 
   return(
@@ -46,7 +74,7 @@ const ContactForm = () => {
           </div>
         ) : (
         <form onSubmit={handleSubmit}>
-
+          {error && <div style={{ color: 'red', marginBottom: '10px'}}>Error: {error}</div>}
           <div>
             <input
               type="text"
@@ -55,6 +83,7 @@ const ContactForm = () => {
               onChange={handleChange}
               placeholder="Your name..."
               required
+              disabled={loading}
             />
           </div>
 
@@ -66,6 +95,7 @@ const ContactForm = () => {
               onChange={handleChange}
               placeholder="your@email.com"
               required
+              disabled={loading}
             />
           </div>
 
@@ -76,6 +106,7 @@ const ContactForm = () => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="Phone Number (optional)"
+              disabled={loading}
             />
           </div>
 
@@ -87,10 +118,13 @@ const ContactForm = () => {
               placeholder="Tell us more about your requirements..."
               rows="6"
               required
+              disabled={loading}
             />
           </div>
 
-          <button type="submit">Send Request</button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Submitting...' : 'Send Request'}
+          </button>
         </form>
 
         )}

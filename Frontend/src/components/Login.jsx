@@ -1,14 +1,9 @@
-import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-
-const TEST_CREDENTIALS = {
-  email: 'user@example.com',
-  password: 'Password123'
-}
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const navigate = useNavigate()
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -22,6 +17,14 @@ const Login = () => {
     return isLoggedIn === 'true' ? 'Welcome back Vashish' : ''
   })
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      navigate('/admin/dashboard')
+    }
+  }, [navigate])
+
   const handleChange = (event) => {
     const { name, value } = event.target
     setFormData({
@@ -32,7 +35,7 @@ const Login = () => {
     if (errorMessage) setErrorMessage('')
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     setErrorMessage('')
     setSuccessMessage('')
@@ -44,36 +47,66 @@ const Login = () => {
 
     setIsLoading(true)
 
-    setTimeout(() => {
-      setIsLoading(false)
-
-      if (formData.email === TEST_CREDENTIALS.email && formData.password === TEST_CREDENTIALS.password) {
-        setSuccessMessage('Login successful! Redirecting ...')
-        localStorage.setItem('isLoggedIn', 'true')
-
-        setFormData({ email: '', password: ''})
-
-        setTimeout(() => {
-          navigate('/admin/dashboard')
-        }, 1500);
-
-      } else {
-        setErrorMessage('Invalid email or password, please try again.')
-
-        setFormData({
-          ...formData,
-          password: ''
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
         })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Invalid credentials')
       }
-    }, 1500)
+
+      setSuccessMessage('Login successful! Redirecting ...')
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('token', data.token)
+
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user))
+      }
+
+      setFormData({ email: '', password: '' })
+
+      setTimeout(() => {
+        navigate('/admin/dashboard')
+      }, 1500);
+    } catch (err) {
+      setErrorMessage(err.message || 'Login failed. Please try again.')
+      setFormData({
+        ...formData,
+        password: ''
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
 
     setSuccessMessage('')
     setErrorMessage('')
     setFormData({ email: '', password: '' })
+    navigate('/admin/login')
+  }
+
+  if (successMessage === 'Welcome back Vashish') {
+    return (
+      <div>
+        <h2>{successMessage}</h2>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    )
   }
 
   return (
@@ -115,6 +148,7 @@ const Login = () => {
             {showPassword ? 'Hide' : 'Show'}
           </button>
         </div>
+
         {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
         {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
 
@@ -123,13 +157,6 @@ const Login = () => {
         </button>
 
       </form>
-
-      {successMessage && (
-        <div>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      )}
-
     </div>
   )
 }
