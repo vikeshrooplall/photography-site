@@ -1,12 +1,14 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Gallery from './components/Gallery'
 import ContactForm from './components/ContactForm'
 import Login from './components/Login'
-import AdminDashboard from './components/AdminDashboard'
 import Home from './components/Home'
 import About from './components/About'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminLayout from './components/admin/AdminLayout'
+import PhotoManager from './components/admin/PhotoManager'
+import ContactManager from './components/admin/ContactManager'
 
 const App = () => {
   return (
@@ -23,11 +25,14 @@ const App = () => {
           path="/admin/dashboard"
           element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <AdminLayout />
             </ProtectedRoute>
           }
-        />
-
+        >
+          <Route index element={<Navigate to="photos" replace />} />
+          <Route path="photos" element={<PhotoManager />} />
+          <Route path="requests" element={<ContactManager />} />
+        </Route>
       </Routes>
     </div>
   )
