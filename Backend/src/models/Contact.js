@@ -25,6 +25,10 @@ const contactSchema = new mongoose.Schema({
     required: [true, 'Message is required'],
     trim: true,
     maxLength: [1000, 'Message cannot exceed more than 1000 characters.']
+  },
+  isRead: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true

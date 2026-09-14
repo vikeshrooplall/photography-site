@@ -68,9 +68,33 @@ const deleteContact = async (request, response) => {
   }
 }
 
+const markContactAsRead = async (request, response) => {
+  try {
+    const id = request.params.id
+
+    const contact = await Contact.findById(id)
+
+    if (!contact) {
+      return response.status(404).json({ error: 'No contact request found.' })
+    }
+
+    contact.isRead = true
+    await contact.save()
+
+    response.status(200).json(contact)
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return response.status(400).json({ error: 'Invalid contact ID format.'})
+    }
+
+    response.status(500).json({ error: error.message })
+  }
+}
+
 module.exports = {
   submitContact,
   getAllContacts,
   getContactById,
-  deleteContact
+  deleteContact,
+  markContactAsRead
 }
