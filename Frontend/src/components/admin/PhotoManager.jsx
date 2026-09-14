@@ -272,12 +272,14 @@ const PhotoManager = () => {
         onSelect={handleCategoryClick}
       />
 
+      {!isAdding && !isEditing && (
       <button onClick={() => {
-        setIsAdding(!isAdding)
+        setIsAdding(true)
         setIsEditing(null)
       }}>
-        {isAdding ? 'Cancel' : 'Add New Photo'}
+        Add New Photo
       </button>
+      )}
 
       {isAdding && (
         <PhotoForm
@@ -292,30 +294,30 @@ const PhotoManager = () => {
         />
       )}
 
-      {isEditing && (
-        <PhotoForm
-          formData={editFormData}
-          onInputChange={handleEditInputChange}
-          onFileChange={handleEditFileChange}
-          onSubmit={handleEditSubmit}
-          onCancel={handleCancelEdit}
-          preview={editPreview}
-          isEditing={true}
-          submitLabel={"Update Photo"}
-        />
-      )}
-
       <div>
         {filteredPhotos.length === 0 ? (
           <p>No photos available in this category. Add your first photo!</p>
         ) : (
           filteredPhotos.map(photo => (
-            <PhotoListItem
-              key={photo._id}
-              photo={photo}
-              onEdit={handleEditClick}
-              onDelete={handleDelete}
-            />
+            <div key={photo._id}>
+              <PhotoListItem
+                photo={photo}
+                onEdit={handleEditClick}
+                onDelete={handleDelete}
+              />
+              {isEditing === photo._id && (
+                <PhotoForm
+                  formData={editFormData}
+                  onInputChange={handleEditInputChange}
+                  onFileChange={handleEditFileChange}
+                  onSubmit={handleEditSubmit}
+                  onCancel={handleCancelEdit}
+                  preview={editPreview}
+                  isEditing={true}
+                  submitLabel={"Update Photo"}
+                />
+              )}
+            </div>
           ))
         )}
       </div>

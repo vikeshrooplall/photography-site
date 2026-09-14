@@ -1,29 +1,28 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
+  const { login, logout, isLoggedIn } = useAuth()
+
 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
-
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn')
-    return isLoggedIn === 'true' ? 'Welcome back Vashish' : ''
+    isLoggedIn ? 'Welcome back Vashish' : ''
   })
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-
-    if (token) {
+    if (isLoggedIn) {
       navigate('/admin/dashboard')
     }
-  }, [navigate])
+  }, [isLoggedIn, navigate])
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -66,18 +65,13 @@ const Login = () => {
       }
 
       setSuccessMessage('Login successful! Redirecting ...')
-      localStorage.setItem('isLoggedIn', 'true')
-      localStorage.setItem('token', data.token)
-
-      if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user))
-      }
+      login(data.token, data.user)
 
       setFormData({ email: '', password: '' })
 
       setTimeout(() => {
         navigate('/admin/dashboard')
-      }, 1500);
+      }, 1500)
     } catch (err) {
       setErrorMessage(err.message || 'Login failed. Please try again.')
       setFormData({
@@ -90,9 +84,7 @@ const Login = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn')
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    logout()
 
     setSuccessMessage('')
     setErrorMessage('')

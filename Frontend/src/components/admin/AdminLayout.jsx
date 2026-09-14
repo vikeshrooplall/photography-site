@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 const AdminLayout = () => {
   const [allPhotos, setAllPhotos] = useState([])
@@ -60,37 +60,6 @@ const AdminLayout = () => {
   return (
     <div>
       <h2>Admin Dashboard</h2>
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <NavLink
-          to="/admin/photos"
-          style={({ isActive }) => ({
-            padding: '10px 20px',
-            backgroundColor: isActive ? '#007bff' : '#f0f0f0',
-            color: isActive ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            textDecoration: 'none'
-          })}
-        >
-          Manage Photos
-        </NavLink>
-
-        <NavLink
-          to="/admin/requests"
-          style={({ isActive }) => ({
-            padding : '10px 20px',
-            backgroundColor: isActive ? '#007bff' : '#f0f0f0',
-            color: isActive ? 'white' : 'black',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            textDecoration: 'none'
-          })}
-        >
-          Contact Requests ({contacts.length})
-        </NavLink>
-      </div>
       {errorMessage && (
         <div style={{ color: 'red', marginBottom: '20px' }}>{errorMessage}</div>
       )}

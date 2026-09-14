@@ -37,9 +37,43 @@ const ContactManager = () => {
     }
   }
 
+  const handleMarkAsRead = async (id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:3001/api/contacts/${id}/read`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization' : `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to mark contact request as read.')
+      }
+
+      const updatedContact = await response.json()
+
+      const updatedContacts = contacts.map(contact =>
+        contact._id === id ? updatedContact : contact
+      )
+      setContacts(updatedContacts)
+      setSuccessMessage('Contact marked as read!')
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to mark contact as read.')
+      console.error('Error marking contact as read:', error)
+    }
+  }
+
+  const unreadCount = contacts.filter(contact => !contact.isRead).length
+
   return (
     <div>
-      <h3>Contact Requests</h3>
+      <h3>
+        Contact Requests
+        {unreadCount > 0 && `(${unreadCount})`}
+      </h3>
       {loadingContacts ? (
         <p>Loading contact requests...</p>
       ) : contacts.length === 0 ? (
@@ -51,6 +85,7 @@ const ContactManager = () => {
               key={contact._id}
               contact={contact}
               onDelete={handleDeleteContact}
+              onMarkRead={handleMarkAsRead}
             />
           ))}
         </div>

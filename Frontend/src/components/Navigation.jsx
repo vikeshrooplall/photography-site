@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useData } from '../context/DataContext'
 
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [isDropDownOpen, setIsDropDownOpen] = useState(false)
+  const { unreadCount } = useData()
 
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
   const username = localStorage.getItem('user')
@@ -24,15 +26,15 @@ const Navigation = () => {
   }
 
   const getAdminToggleLink = () => {
-    if (location.pathname === '/admin/photos') {
-      return { path: '/admin/requests', label: 'Contact Requests' }
+    if (location.pathname === '/admin/dashboard/photos') {
+      return { path: '/admin/dashboard/requests', label: 'Contact Requests' }
     }
 
-    if (location.pathname === '/admin/requests') {
-      return { path: '/admin/photos', label: 'Manage Photos' }
+    if (location.pathname === '/admin/dashboard/requests') {
+      return { path: '/admin/dashboard/photos', label: 'Manage Photos' }
     }
 
-    return { path: '/admin/photos', label: 'Manage Photos' }
+    return { path: '/admin/dashboard/photos', label: 'Manage Photos' }
   }
 
   if (!isLoggedIn) {
@@ -51,7 +53,10 @@ const Navigation = () => {
 
   return (
     <nav style={{ display: 'flex', gap: '15px', padding: '15px', backgroundColor: '#f8f9fa', alignItems: 'center' }}>
-      <Link to={adminLink.path}>{adminLink.label}</Link>
+      <Link to={adminLink.path}>
+        {adminLink.label}
+        {adminLink.label === 'Contact Requests' && unreadCount > 0 && ` (${unreadCount})`}
+      </Link>
       <Link to="/about">About</Link>
 
       <div style={{ position: 'relative', marginLeft: 'auto' }}>
