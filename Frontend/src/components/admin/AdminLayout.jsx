@@ -1,65 +1,13 @@
-import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useData } from '../../context/DataContext'
 
 const AdminLayout = () => {
-  const [allPhotos, setAllPhotos] = useState([])
-  const [contacts, setContacts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [loadingContacts, setLoadingContacts] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
-
-  useEffect(() => {
-    fetchPhotos()
-    fetchContacts()
-  }, [])
-
-  const fetchPhotos = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch('http://localhost:3001/api/photos')
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch photos')
-      }
-
-      const data = await response.json()
-      setAllPhotos(data)
-    } catch (error) {
-      console.error('Error fetching Photos:', error)
-      setErrorMessage('Failed to load photos.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchContacts = async () => {
-    try {
-      setLoadingContacts(true)
-      const token = localStorage.getItem('token')
-
-      const response = await fetch('http://localhost:3001/api/contacts', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch contact requests.')
-      }
-
-      const data = await response.json()
-      setContacts(data)
-    } catch (error) {
-      console.error('Error fetching requests:', error)
-    } finally {
-      setLoadingContacts(false)
-    }
-  }
+  const { errorMessage, successMessage } = useData()
 
   return (
     <div>
       <h2>Admin Dashboard</h2>
+
       {errorMessage && (
         <div style={{ color: 'red', marginBottom: '20px' }}>{errorMessage}</div>
       )}
@@ -68,13 +16,7 @@ const AdminLayout = () => {
         <div style={{ color: 'green', marginBottom: '20px' }}>{successMessage}</div>
       )}
 
-      <Outlet context ={{
-        allPhotos, setAllPhotos,
-        contacts, setContacts,
-        loading, loadingContacts,
-        errorMessage, setErrorMessage,
-        successMessage, setSuccessMessage
-      }} />
+      <Outlet />
     </div>
   )
 }

@@ -1,6 +1,5 @@
-import { useOutletContext } from 'react-router-dom'
+import { useData } from '../../context/DataContext'
 import ContactListItem from './ContactListItem'
-
 
 const ContactManager = () => {
   const {
@@ -8,7 +7,7 @@ const ContactManager = () => {
     loadingContacts,
     errorMessage, setErrorMessage,
     successMessage, setSuccessMessage
-  } = useOutletContext()
+  } = useData()
 
   const handleDeleteContact = async (id) => {
     if (window.confirm('Are you sure you want to delete this contact request?')) {
@@ -17,7 +16,7 @@ const ContactManager = () => {
         const response = await fetch(`http://localhost:3001/api/contacts/${id}`, {
           method: 'DELETE',
           headers: {
-            'Authorization' : `Bearer ${token}`
+            'Authorization': `Bearer ${token}`
           }
         })
 
@@ -29,7 +28,7 @@ const ContactManager = () => {
         const updatedContacts = contacts.filter(contact => contact._id !== id)
         setContacts(updatedContacts)
         setSuccessMessage('Contact deleted successfully!')
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setTimeout(() => setSuccessMessage(''), 3000)
       } catch (error) {
         setErrorMessage(error.message || 'Failed to delete contact.')
         console.error('Error deleting contact:', error)
@@ -43,7 +42,7 @@ const ContactManager = () => {
       const response = await fetch(`http://localhost:3001/api/contacts/${id}/read`, {
         method: 'PATCH',
         headers: {
-          'Authorization' : `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
@@ -59,7 +58,7 @@ const ContactManager = () => {
       )
       setContacts(updatedContacts)
       setSuccessMessage('Contact marked as read!')
-      setTimeout(() => setSuccessMessage(''), 3000);
+      setTimeout(() => setSuccessMessage(''), 3000)
     } catch (error) {
       setErrorMessage(error.message || 'Failed to mark contact as read.')
       console.error('Error marking contact as read:', error)
@@ -72,7 +71,7 @@ const ContactManager = () => {
     <div>
       <h3>
         Contact Requests
-        {unreadCount > 0 && `(${unreadCount})`}
+        {unreadCount > 0 && ` (${unreadCount})`}
       </h3>
       {loadingContacts ? (
         <p>Loading contact requests...</p>

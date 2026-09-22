@@ -1,22 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { useData } from '../context/DataContext'
+import Logo from './Logo'
+import './Navigation.css'
 
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [isDropDownOpen, setIsDropDownOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(true)
   const { unreadCount } = useData()
+  const { isLoggedIn, user, logout } = useAuth()
 
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
-  const username = localStorage.getItem('user')
-    ? JSON.parse(localStorage.getItem('user')).username
-    : 'Admin'
+  const username = user?.username || 'Admin'
+  const useTransparentStyle = !isScrolled
+
+  // IntersectionObserver — watches for the hero sentinel
+  useEffect(() => {
+    const sentinel = document.getElementById('hero-sentinel')
+
+    if (!sentinel) {
+      // No hero on this page → always solid
+      setIsScrolled(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsScrolled(!entry.isIntersecting)
+      },
+      { threshold: 0 }
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [location.pathname])
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn')
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    logout()
     setIsDropDownOpen(false)
     navigate('/admin/login')
   }
@@ -37,76 +59,82 @@ const Navigation = () => {
     return { path: '/admin/dashboard/photos', label: 'Manage Photos' }
   }
 
+  const navClass = `navbar ${useTransparentStyle ? 'navbar--transparent' : 'navbar--solid'}`
+
+  // ---------- NOT LOGGED IN ----------
   if (!isLoggedIn) {
     return (
-      <nav style={{ display: 'flex', gap: '15px', padding: '15px', backgroundColor: '#f8f9fa' }}>
-        <Link to="/">Home</Link>
-        <Link to="/gallery">Gallery</Link>
-        <Link to="/contact">Contact</Link>
-        <Link to="/about">About</Link>
-        <Link to="/admin/login">Admin</Link>
+      <nav className={navClass}>
+        <div className="navbar-inner">
+          {/* Left Links */}
+          <div className="navbar-group navbar-group--left">
+            <Link to="/" className="navbar-link">Home</Link>
+            <Link to="/gallery" className="navbar-link">Gallery</Link>
+          </div>
+
+          {/* Center — Logo */}
+          <Link to="/" className="navbar-logo" aria-label="Memento Memories home">
+            <Logo
+              variant={useTransparentStyle ? 'light' : 'dark'}
+              size="sm"
+              showWordmark={false}
+            />
+          </Link>
+
+          {/* Right Links */}
+          <div className="navbar-group navbar-group--right">
+            <Link to="/about" className="navbar-link">About</Link>
+            <Link to="/contact" className="navbar-link">Contact</Link>
+            <Link to="/admin/login" className="navbar-link navbar-link--admin">Admin</Link>
+          </div>
+        </div>
       </nav>
     )
   }
 
+  // ---------- LOGGED IN (ADMIN) ----------
   const adminLink = getAdminToggleLink()
 
   return (
-    <nav style={{ display: 'flex', gap: '15px', padding: '15px', backgroundColor: '#f8f9fa', alignItems: 'center' }}>
-      <Link to={adminLink.path}>
-        {adminLink.label}
-        {adminLink.label === 'Contact Requests' && unreadCount > 0 && ` (${unreadCount})`}
-      </Link>
-      <Link to="/about">About</Link>
+    <nav className={navClass}>
+      <div className="navbar-inner">
+        {/* Left Links */}
+        <div className="navbar-group navbar-group--left">
+          <Link to={adminLink.path} className="navbar-link">
+            {adminLink.label}
+            {adminLink.label === 'Contact Requests' && unreadCount > 0 && ` (${unreadCount})`}
+          </Link>
+          <Link to="/about" className="navbar-link">About</Link>
+        </div>
 
-      <div style={{ position: 'relative', marginLeft: 'auto' }}>
-        <button
-          onClick={toggleDropDown}
-          style={{
-            backgroundColor: 'transparent',
-            border: '1px solid #ccc',
-            padding: '5px 10px',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          {username} ▼
-        </button>
+        {/* Center — Logo */}
+        <Link to="/admin/dashboard/photos" className="navbar-logo" aria-label="Admin dashboard">
+          <Logo
+            variant={useTransparentStyle ? 'light' : 'dark'}
+            size="sm"
+            showWordmark={false}
+          />
+        </Link>
 
-        {isDropDownOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: '100%',
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              minWidth: '180px',
-              padding: '10px',
-              zIndex: 1000
-            }}
-          >
-            <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#666' }}>
-              Logged in as: <strong>{username}</strong>
-            </p>
-            <button
-              onClick={handleLogout}
-              style={{
-                width: '100%',
-                padding: '8px',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Logout
+        {/* Right — Admin Dropdown */}
+        <div className="navbar-group navbar-group--right">
+          <div className="navbar-dropdown">
+            <button onClick={toggleDropDown} className="navbar-dropdown-toggle">
+              {username} ▼
             </button>
+
+            {isDropDownOpen && (
+              <div className="navbar-dropdown-menu">
+                <p className="navbar-dropdown-info">
+                  Logged in as: <strong>{username}</strong>
+                </p>
+                <button onClick={handleLogout} className="navbar-dropdown-logout">
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </nav>
   )

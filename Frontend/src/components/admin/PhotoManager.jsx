@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useData } from '../../context/DataContext'
 import CategoryFilter from '../CategoryFilter'
 import PhotoListItem from './PhotoListItem'
 import PhotoForm from './PhotoForm'
 
 const PhotoManager = () => {
   const {
-    allPhotos, setAllPhotos,
+    photos, setPhotos,
     loading,
     errorMessage, setErrorMessage,
     successMessage, setSuccessMessage
-  } = useOutletContext()
+  } = useData()
 
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [isAdding, setIsAdding] = useState(false)
@@ -39,8 +39,8 @@ const PhotoManager = () => {
   }
 
   const filteredPhotos = selectedCategory === 'all'
-  ? allPhotos
-  : allPhotos.filter(photo => photo.category === selectedCategory)
+    ? photos
+    : photos.filter(photo => photo.category === selectedCategory)
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -89,7 +89,7 @@ const PhotoManager = () => {
       const response = await fetch('http://localhost:3001/api/photos/upload', {
         method: 'POST',
         headers: {
-          'Authorization' : `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: formDataToSend
       })
@@ -100,7 +100,7 @@ const PhotoManager = () => {
       }
 
       const newPhoto = await response.json()
-      setAllPhotos([newPhoto.photo, ...allPhotos])
+      setPhotos([newPhoto.photo, ...photos])
       setSuccessMessage('Photo added successfully!')
       setFormData({ title: '', category: '', imageUrl: '', description: '' })
       setIsAdding(false)
@@ -113,10 +113,8 @@ const PhotoManager = () => {
   }
 
   const handleEditClick = (photo) => {
-    // Sets isEditing to photo ID
     setIsEditing(photo._id)
 
-    // Pre-fills editFormData with photo data
     setEditFormData({
       title: photo.title,
       category: photo.category,
@@ -124,11 +122,8 @@ const PhotoManager = () => {
       description: photo.description || ''
     })
 
-// Sets editPreview to existing image URL
     setEditPreview(photo.imageUrl)
-    // Closes add form if open
     setIsAdding(false)
-// Clears messages
     setErrorMessage('')
     setSuccessMessage('')
     setEditSelectedFile(null)
@@ -186,7 +181,7 @@ const PhotoManager = () => {
       const response = await fetch(`http://localhost:3001/api/photos/${isEditing}`, {
         method: 'PUT',
         headers: {
-          'Authorization' : `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: formDataToSend
       })
@@ -198,11 +193,11 @@ const PhotoManager = () => {
 
       const updatedPhoto = await response.json()
 
-      const updatedPhotos = allPhotos.map(photo =>
+      const updatedPhotos = photos.map(photo =>
         photo._id === isEditing ? updatedPhoto : photo
       )
 
-      setAllPhotos(updatedPhotos)
+      setPhotos(updatedPhotos)
       setSuccessMessage('Photo updated successfully!')
       setIsEditing(null)
       setEditFormData({
@@ -246,13 +241,13 @@ const PhotoManager = () => {
 
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.error ||'Failed to delete photo')
+          throw new Error(errorData.error || 'Failed to delete photo')
         }
 
-        const updatedPhotos = allPhotos.filter(photo => photo._id !== id)
-        setAllPhotos(updatedPhotos)
+        const updatedPhotos = photos.filter(photo => photo._id !== id)
+        setPhotos(updatedPhotos)
         setSuccessMessage('Photo deleted successfully!')
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setTimeout(() => setSuccessMessage(''), 3000)
       } catch (error) {
         setErrorMessage(error.message || 'Failed to delete photo')
         console.error('Error deleting photo:', error)
@@ -273,12 +268,12 @@ const PhotoManager = () => {
       />
 
       {!isAdding && !isEditing && (
-      <button onClick={() => {
-        setIsAdding(true)
-        setIsEditing(null)
-      }}>
-        Add New Photo
-      </button>
+        <button onClick={() => {
+          setIsAdding(true)
+          setIsEditing(null)
+        }}>
+          Add New Photo
+        </button>
       )}
 
       {isAdding && (
@@ -321,7 +316,6 @@ const PhotoManager = () => {
           ))
         )}
       </div>
-
     </div>
   )
 }
