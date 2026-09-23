@@ -1,0 +1,87 @@
+/* ============================================================
+   CONTACT MANAGER
+   ============================================================ */
+.contact-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.contact-manager-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-manager-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.contact-manager-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-deep-navy);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.contact-manager-count {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  background-color: var(--color-accent-blue);
+  color: var(--color-cream-bg);
+  padding: 4px 10px;
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+.contact-manager-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--color-muted-text);
+  margin: 0;
+}
+
+/* ============================================================
+   STATE (loading / empty)
+   ============================================================ */
+.contact-manager-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-muted-text);
+}
+
+/* ============================================================
+   LIST
+   ============================================================ */
+.contact-manager-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (min-width: 640px) {
+  .contact-manager-title {
+    font-size: 1.5rem;
+  }
+}

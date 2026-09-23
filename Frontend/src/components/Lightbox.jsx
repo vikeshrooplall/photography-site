@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import './Lightbox.css'
 
-const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
+const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
   const closeButtonRef = useRef(null)
   const touchStartX = useRef(null)
   const touchEndX = useRef(null)
@@ -31,14 +31,12 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
 
     document.body.style.overflow = 'hidden'
 
-    // Focus the close button
     if (closeButtonRef.current) {
       closeButtonRef.current.focus()
     }
 
     return () => {
       document.body.style.overflow = previousOverflow
-      // Restore focus to the element that opened the lightbox
       if (previousFocus && previousFocus.focus) {
         previousFocus.focus()
       }
@@ -62,10 +60,8 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
     const minSwipeDistance = 50
 
     if (distance > minSwipeDistance) {
-      // Swipe left → next
       onNavigate(1)
     } else if (distance < -minSwipeDistance) {
-      // Swipe right → previous
       onNavigate(-1)
     }
 
@@ -82,7 +78,6 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
       aria-modal="true"
       aria-label="Photo lightbox"
       onClick={(e) => {
-        // Close if clicking the backdrop (not the image or buttons)
         if (e.target === e.currentTarget) {
           onClose()
         }
@@ -90,7 +85,7 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Close button */}
+      {/* Close button — top right */}
       <button
         ref={closeButtonRef}
         className="lightbox-close"
@@ -109,9 +104,9 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
         ‹
       </button>
 
-      {/* Image container */}
+      {/* Image + actions column */}
       <div
-        className="lightbox-image-wrapper"
+        className="lightbox-body"
         onClick={(e) => e.stopPropagation()}
       >
         <img
@@ -120,6 +115,12 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate }) => {
           className="lightbox-image"
           draggable={false}
         />
+
+        {actions && (
+          <div className="lightbox-actions">
+            {actions(currentPhoto)}
+          </div>
+        )}
       </div>
 
       {/* Next arrow — desktop only */}

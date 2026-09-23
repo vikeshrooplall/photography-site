@@ -11,28 +11,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.5rem;
   animation: lightboxFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes lightboxFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ============================================================
-   IMAGE
+   BODY — IMAGE + ACTIONS COLUMN
    ============================================================ */
-.lightbox-image-wrapper {
+.lightbox-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
   max-width: 96vw;
   max-height: 96vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   animation: imageZoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -49,7 +46,7 @@
 
 .lightbox-image {
   max-width: 96vw;
-  max-height: 96vh;
+  max-height: 82vh;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -60,16 +57,60 @@
 }
 
 /* ============================================================
+   ACTIONS (admin only — below image)
+   ============================================================ */
+.lightbox-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.lightbox-actions button {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.lightbox-action-edit {
+  background-color: var(--color-cream-bg);
+  color: var(--color-deep-navy);
+}
+
+.lightbox-action-edit:hover {
+  background-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.lightbox-action-delete {
+  background-color: rgba(176, 65, 62, 0.9);
+  color: #ffffff;
+}
+
+.lightbox-action-delete:hover {
+  background-color: #b0413e;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
    CLOSE BUTTON
    ============================================================ */
 .lightbox-close {
   position: absolute;
-  top: 2rem;
-  right: 2rem;
-  z-index: 110;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 120;
   background: none;
   border: none;
-  color: rgba(247, 245, 242, 0.8);
+  color: rgba(247, 245, 242, 0.85);
   font-size: 2rem;
   font-weight: 300;
   line-height: 1;
@@ -97,7 +138,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 110;
+  z-index: 120;
   background: none;
   border: none;
   color: rgba(247, 245, 242, 0.6);
@@ -122,7 +163,7 @@
 }
 
 .lightbox-arrow--prev {
-  left: 1.5rem;
+  left: 1rem;
 }
 
 .lightbox-arrow--prev:hover {
@@ -130,7 +171,7 @@
 }
 
 .lightbox-arrow--next {
-  right: 1.5rem;
+  right: 1rem;
 }
 
 .lightbox-arrow--next:hover {
@@ -148,7 +189,16 @@
 
 @media (max-width: 767px) {
   .lightbox {
-    padding: 0.6rem;
+    padding: 1rem;
+  }
+
+  .lightbox-body {
+    gap: 1rem;
+  }
+
+  .lightbox-image {
+    max-width: 96vw;
+    max-height: 78vh;
   }
 
   .lightbox-close {
@@ -157,23 +207,18 @@
     font-size: 1.75rem;
   }
 
-  .lightbox-image-wrapper {
-    max-width: 98vw;
-    max-height: 94vh;
-  }
-
-  .lightbox-image {
-    max-width: 95vw;
-    max-height: 85vh;
+  .lightbox-actions button {
+    font-size: 0.6875rem;
+    padding: 0.5rem 1rem;
   }
 }
 
 /* ============================================================
-   ACCESSIBILITY — REDUCED MOTION
+   REDUCED MOTION
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .lightbox,
-  .lightbox-image-wrapper {
+  .lightbox-body {
     animation: none;
   }
 

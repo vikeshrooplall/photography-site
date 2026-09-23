@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import { useData } from '../../context/DataContext'
 import CategoryFilter from '../CategoryFilter'
-import PhotoListItem from './PhotoListItem'
 import PhotoForm from './PhotoForm'
+import Modal from './Modal'
+import AdminPhotoCard from './AdminPhotoCard'
+import Lightbox from '../Lightbox'
+import './PhotoManager.css'
+
+const HEIGHTS = [510, 450, 370, 660, 490, 620, 430, 510, 580, 420]
 
 const PhotoManager = () => {
   const {
@@ -13,56 +18,72 @@ const PhotoManager = () => {
   } = useData()
 
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [isAdding, setIsAdding] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(null)
   const [preview, setPreview] = useState(null)
-  const [editPreview, setEditPreview] = useState(null)
+  const [selectedFile, setSelectedFile] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     imageUrl: '',
     description: ''
   })
-  const [editFormData, setEditFormData] = useState({
-    title: '',
-    category: '',
-    imageUrl: '',
-    description: ''
-  })
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [editSelectedFile, setEditSelectedFile] = useState(null)
+  const [lightboxIndex, setLightboxIndex] = useState(null)
 
   const categories = ['all', 'weddings', 'portraits', 'nature', 'commercials']
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category)
-  }
 
   const filteredPhotos = selectedCategory === 'all'
     ? photos
     : photos.filter(photo => photo.category === selectedCategory)
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0]
+  // ============ Add / Edit Modal ============
+  const openAddModal = () => {
+    setFormData({ title: '', category: '', imageUrl: '', description: '' })
+    setPreview(null)
+    setSelectedFile(null)
+    setIsEditing(null)
+    setIsModalOpen(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+  }
 
-    if (file) {
-      setSelectedFile(file)
-      const imageUrl = URL.createObjectURL(file)
-      setFormData({
-        ...formData,
-        imageUrl: imageUrl
-      })
-      setPreview(imageUrl)
-    }
+  const openEditModal = (photo) => {
+    setFormData({
+      title: photo.title,
+      category: photo.category,
+      imageUrl: photo.imageUrl,
+      description: photo.description || ''
+    })
+    setPreview(photo.imageUrl)
+    setSelectedFile(null)
+    setIsEditing(photo._id)
+    setIsModalOpen(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setIsEditing(null)
+    setFormData({ title: '', category: '', imageUrl: '', description: '' })
+    setPreview(null)
+    setSelectedFile(null)
   }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
-    setFormData({
-      ...formData,
-      [name]: value
-    })
+    setFormData({ ...formData, [name]: value })
     if (errorMessage) setErrorMessage('')
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      setSelectedFile(file)
+      const imageUrl = URL.createObjectURL(file)
+      setFormData({ ...formData, imageUrl })
+      setPreview(imageUrl)
+    }
   }
 
   const handleSubmit = async (event) => {
@@ -71,251 +92,229 @@ const PhotoManager = () => {
     setSuccessMessage('')
 
     if (!formData.title || !formData.category) {
-      setErrorMessage('Please fill in all required fields')
+      setErrorMessage('Please fill in all required fields.')
       return
     }
 
     try {
       const token = localStorage.getItem('token')
-      const formDataToSend = new FormData()
-      formDataToSend.append('title', formData.title)
-      formDataToSend.append('category', formData.category)
-      formDataToSend.append('description', formData.description || '')
+      const body = new FormData()
+      body.append('title', formData.title)
+      body.append('category', formData.category)
+      body.append('description', formData.description || '')
 
-      if (selectedFile) {
-        formDataToSend.append('image', selectedFile)
-      }
+      let url = 'http://localhost:3001/api/photos/upload'
+      let method = 'POST'
 
-      const response = await fetch('http://localhost:3001/api/photos/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to add photo.')
-      }
-
-      const newPhoto = await response.json()
-      setPhotos([newPhoto.photo, ...photos])
-      setSuccessMessage('Photo added successfully!')
-      setFormData({ title: '', category: '', imageUrl: '', description: '' })
-      setIsAdding(false)
-      setPreview(null)
-      setSelectedFile(null)
-    } catch (error) {
-      setErrorMessage(error.message || 'Failed to add photo')
-      console.error('Error adding photo:', error)
-    }
-  }
-
-  const handleEditClick = (photo) => {
-    setIsEditing(photo._id)
-
-    setEditFormData({
-      title: photo.title,
-      category: photo.category,
-      imageUrl: photo.imageUrl,
-      description: photo.description || ''
-    })
-
-    setEditPreview(photo.imageUrl)
-    setIsAdding(false)
-    setErrorMessage('')
-    setSuccessMessage('')
-    setEditSelectedFile(null)
-  }
-
-  const handleEditInputChange = (event) => {
-    const { name, value } = event.target
-
-    setEditFormData({
-      ...editFormData,
-      [name]: value
-    })
-
-    if (errorMessage) setErrorMessage('')
-  }
-
-  const handleEditFileChange = (event) => {
-    const file = event.target.files[0]
-
-    if (file) {
-      setEditSelectedFile(file)
-      const imageUrl = URL.createObjectURL(file)
-      setEditFormData({
-        ...editFormData,
-        imageUrl: imageUrl
-      })
-
-      setEditPreview(imageUrl)
-    }
-  }
-
-  const handleEditSubmit = async (event) => {
-    event.preventDefault()
-    setErrorMessage('')
-    setSuccessMessage('')
-
-    if (!editFormData.title || !editFormData.category) {
-      setErrorMessage('Please fill in all required fields')
-      return
-    }
-
-    try {
-      const token = localStorage.getItem('token')
-      const formDataToSend = new FormData()
-      formDataToSend.append('title', editFormData.title)
-      formDataToSend.append('category', editFormData.category)
-      formDataToSend.append('description', editFormData.description || '')
-
-      if (editSelectedFile) {
-        formDataToSend.append('image', editSelectedFile)
-      } else if (editFormData.imageUrl) {
-        formDataToSend.append('imageUrl', editFormData.imageUrl)
-      }
-
-      const response = await fetch(`http://localhost:3001/api/photos/${isEditing}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to update photo')
-      }
-
-      const updatedPhoto = await response.json()
-
-      const updatedPhotos = photos.map(photo =>
-        photo._id === isEditing ? updatedPhoto : photo
-      )
-
-      setPhotos(updatedPhotos)
-      setSuccessMessage('Photo updated successfully!')
-      setIsEditing(null)
-      setEditFormData({
-        title: '',
-        category: '',
-        imageUrl: '',
-        description: ''
-      })
-      setEditPreview(null)
-      setEditSelectedFile(null)
-    } catch (error) {
-      setErrorMessage(error.message || 'Failed to update photo')
-      console.error('Error updating photo:', error)
-    }
-  }
-
-  const handleCancelEdit = () => {
-    setIsEditing(null)
-    setEditFormData({
-      title: '',
-      category: '',
-      imageUrl: '',
-      description: ''
-    })
-    setEditPreview(null)
-    setEditSelectedFile(null)
-    setErrorMessage('')
-    setSuccessMessage('')
-  }
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this photo')) {
-      try {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`http://localhost:3001/api/photos/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to delete photo')
+      if (isEditing) {
+        url = `http://localhost:3001/api/photos/${isEditing}`
+        method = 'PUT'
+        if (selectedFile) {
+          body.append('image', selectedFile)
+        } else {
+          body.append('imageUrl', formData.imageUrl)
         }
-
-        const updatedPhotos = photos.filter(photo => photo._id !== id)
-        setPhotos(updatedPhotos)
-        setSuccessMessage('Photo deleted successfully!')
-        setTimeout(() => setSuccessMessage(''), 3000)
-      } catch (error) {
-        setErrorMessage(error.message || 'Failed to delete photo')
-        console.error('Error deleting photo:', error)
+      } else if (selectedFile) {
+        body.append('image', selectedFile)
       }
+
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save photo.')
+      }
+
+      const savedPhoto = await response.json()
+
+      if (isEditing) {
+        const updatedPhoto = savedPhoto.photo || savedPhoto
+        setPhotos(photos.map(p => (p._id === isEditing ? updatedPhoto : p)))
+        setSuccessMessage('Photo updated successfully!')
+      } else {
+        const newPhoto = savedPhoto.photo || savedPhoto
+        setPhotos([newPhoto, ...photos])
+        setSuccessMessage('Photo added successfully!')
+      }
+
+      closeModal()
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to save photo.')
+      console.error('Photo save error:', err)
     }
   }
 
-  if (loading) {
-    return <div>Loading photos...</div>
+  // ============ Delete ============
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this photo?')) return
+
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:3001/api/photos/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete photo.')
+      }
+
+      const updatedPhotos = photos.filter(p => p._id !== id)
+      setPhotos(updatedPhotos)
+      setSuccessMessage('Photo deleted successfully!')
+      setTimeout(() => setSuccessMessage(''), 3000)
+
+      // Advance lightbox to next photo, or close if empty
+      if (lightboxIndex !== null) {
+        const newFiltered = selectedCategory === 'all'
+          ? updatedPhotos
+          : updatedPhotos.filter(p => p.category === selectedCategory)
+
+        if (newFiltered.length === 0) {
+          setLightboxIndex(null)
+        } else if (lightboxIndex >= newFiltered.length) {
+          setLightboxIndex(newFiltered.length - 1)
+        }
+        // Otherwise, keep the same index (next photo takes its place)
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Failed to delete photo.')
+      console.error('Photo delete error:', err)
+    }
+  }
+
+  // ============ Lightbox ============
+  const handlePhotoView = (photo) => {
+    const index = filteredPhotos.findIndex(p => p._id === photo._id)
+    if (index !== -1) {
+      setLightboxIndex(index)
+    }
+  }
+
+  const handleLightboxClose = () => {
+    setLightboxIndex(null)
+  }
+
+  const handleLightboxNavigate = (direction) => {
+    if (lightboxIndex === null) return
+    const newIndex =
+      (lightboxIndex + direction + filteredPhotos.length) %
+      filteredPhotos.length
+    setLightboxIndex(newIndex)
+  }
+
+  const handleLightboxEdit = (photo) => {
+    setLightboxIndex(null)
+    openEditModal(photo)
   }
 
   return (
-    <div>
+    <div className="photo-manager">
+
+      {/* Category filter */}
       <CategoryFilter
         categories={categories}
         selectedCategory={selectedCategory}
-        onSelect={handleCategoryClick}
+        onSelect={setSelectedCategory}
       />
 
-      {!isAdding && !isEditing && (
-        <button onClick={() => {
-          setIsAdding(true)
-          setIsEditing(null)
-        }}>
-          Add New Photo
+      {/* Add button */}
+      <div className="photo-manager-actions">
+        <button
+          type="button"
+          className="photo-manager-add-btn"
+          onClick={openAddModal}
+        >
+          + Add New Photo
         </button>
+      </div>
+
+      {/* Loading / empty / grid */}
+      {loading ? (
+        <div className="photo-manager-state">
+          <p>Loading photos...</p>
+        </div>
+      ) : filteredPhotos.length === 0 ? (
+        <div className="photo-manager-state">
+          <p>No photos in this category yet.</p>
+          <button
+            type="button"
+            className="photo-manager-add-btn"
+            onClick={openAddModal}
+          >
+            + Add Your First Photo
+          </button>
+        </div>
+      ) : (
+        <div className="photo-manager-grid">
+          {filteredPhotos.map((photo, index) => (
+            <AdminPhotoCard
+              key={photo._id}
+              photo={photo}
+              height={HEIGHTS[index % HEIGHTS.length]}
+              onView={handlePhotoView}
+            />
+          ))}
+        </div>
       )}
 
-      {isAdding && (
+      {/* Add / Edit Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={isEditing ? 'Edit Photo' : 'Add New Photo'}
+      >
         <PhotoForm
           formData={formData}
           onInputChange={handleInputChange}
           onFileChange={handleFileChange}
           onSubmit={handleSubmit}
-          onCancel={() => setIsAdding(false)}
+          onCancel={closeModal}
           preview={preview}
-          isEditing={false}
-          submitLabel="Add Photo"
+          isEditing={!!isEditing}
+          submitLabel={isEditing ? 'Update Photo' : 'Add Photo'}
+        />
+      </Modal>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && filteredPhotos.length > 0 && (
+        <Lightbox
+          photos={filteredPhotos}
+          currentIndex={lightboxIndex}
+          onClose={handleLightboxClose}
+          onNavigate={handleLightboxNavigate}
+          actions={(photo) => (
+            <>
+              <button
+                type="button"
+                className="lightbox-action-edit"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleLightboxEdit(photo)
+                }}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="lightbox-action-delete"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDelete(photo._id)
+                }}
+              >
+                Delete
+              </button>
+            </>
+          )}
         />
       )}
 
-      <div>
-        {filteredPhotos.length === 0 ? (
-          <p>No photos available in this category. Add your first photo!</p>
-        ) : (
-          filteredPhotos.map(photo => (
-            <div key={photo._id}>
-              <PhotoListItem
-                photo={photo}
-                onEdit={handleEditClick}
-                onDelete={handleDelete}
-              />
-              {isEditing === photo._id && (
-                <PhotoForm
-                  formData={editFormData}
-                  onInputChange={handleEditInputChange}
-                  onFileChange={handleEditFileChange}
-                  onSubmit={handleEditSubmit}
-                  onCancel={handleCancelEdit}
-                  preview={editPreview}
-                  isEditing={true}
-                  submitLabel={"Update Photo"}
-                />
-              )}
-            </div>
-          ))
-        )}
-      </div>
     </div>
   )
 }
