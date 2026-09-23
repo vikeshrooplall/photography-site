@@ -1,8 +1,8 @@
 import './Hero.css'
 
-const Hero = ({ imageUrl, title, subtitle, children }) => {
+const Hero = ({ imageUrl, title, subtitle, children, size= 'full' }) => {
   return (
-    <section className="hero">
+    <section className={`hero hero--${size}`}>
       {/* Background image */}
       <div
         className="hero-bg"

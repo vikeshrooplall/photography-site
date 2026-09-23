@@ -1,0 +1,22 @@
+/* ============================================================
+   PHOTO LIST — CSS MASONRY (multi-column)
+   ============================================================ */
+.photo-list {
+  width: 100%;
+  column-count: 1;
+  column-gap: 0.6rem;
+}
+
+@media (min-width: 640px) {
+  .photo-list {
+    column-count: 2;
+    column-gap: 0.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .photo-list {
+    column-count: 3;
+    column-gap: 0.6rem;
+  }
+}

@@ -1,0 +1,34 @@
+/* ============================================================
+   PHOTO CARD — MASONRY ITEM (image only)
+   ============================================================ */
+.photo-card {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+  border-radius: 1px;
+  background-color: var(--color-deep-navy);
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.photo-card:focus {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+}
+
+.photo-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.photo-card:hover img {
+  transform: scale(1.015);
+  opacity: 0.95;
+}

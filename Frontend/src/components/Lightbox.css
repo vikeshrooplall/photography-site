@@ -1,0 +1,188 @@
+/* ============================================================
+   LIGHTBOX — FULL-SCREEN OVERLAY
+   ============================================================ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(6, 18, 34, 0.95);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: lightboxFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes lightboxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   IMAGE
+   ============================================================ */
+.lightbox-image-wrapper {
+  max-width: 96vw;
+  max-height: 96vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: imageZoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes imageZoomIn {
+  from {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.lightbox-image {
+  max-width: 96vw;
+  max-height: 96vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ============================================================
+   CLOSE BUTTON
+   ============================================================ */
+.lightbox-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 110;
+  background: none;
+  border: none;
+  color: rgba(247, 245, 242, 0.8);
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease, transform 0.3s ease;
+  font-family: var(--font-body);
+}
+
+.lightbox-close:hover {
+  color: var(--color-cream-bg);
+  transform: rotate(90deg);
+}
+
+.lightbox-close:focus {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   ARROWS — DESKTOP ONLY
+   ============================================================ */
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 110;
+  background: none;
+  border: none;
+  color: rgba(247, 245, 242, 0.6);
+  font-size: 4rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  padding: 1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  font-family: var(--font-body);
+  display: none;
+}
+
+.lightbox-arrow:hover {
+  color: var(--color-cream-bg);
+}
+
+.lightbox-arrow:focus {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.lightbox-arrow--prev {
+  left: 1.5rem;
+}
+
+.lightbox-arrow--prev:hover {
+  transform: translateY(-50%) translateX(-4px);
+}
+
+.lightbox-arrow--next {
+  right: 1.5rem;
+}
+
+.lightbox-arrow--next:hover {
+  transform: translateY(-50%) translateX(4px);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (min-width: 768px) {
+  .lightbox-arrow {
+    display: block;
+  }
+}
+
+@media (max-width: 767px) {
+  .lightbox {
+    padding: 0.6rem;
+  }
+
+  .lightbox-close {
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.75rem;
+  }
+
+  .lightbox-image-wrapper {
+    max-width: 98vw;
+    max-height: 94vh;
+  }
+
+  .lightbox-image {
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY — REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-image-wrapper {
+    animation: none;
+  }
+
+  .lightbox-close:hover {
+    transform: none;
+  }
+
+  .lightbox-arrow--prev:hover,
+  .lightbox-arrow--next:hover {
+    transform: translateY(-50%);
+  }
+}

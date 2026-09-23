@@ -1,9 +1,27 @@
-const PhotoCard =({ photo }) => (
-  <div>
-    <img src={photo.imageUrl} alt={photo.title} />
-    <h4>{photo.title}</h4>
-    <p>{photo.category}</p>
-  </div>
-)
+import './PhotoCard.css'
+
+const PhotoCard = ({ photo, height, onClick }) => {
+  return (
+    <div
+      className="photo-card"
+      style={{ height: `${height}px` }}
+      onClick={() => onClick(photo)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick(photo)
+        }
+      }}
+    >
+      <img
+        src={photo.imageUrl}
+        alt={photo.title}
+        loading="lazy"
+      />
+    </div>
+  )
+}
 
 export default PhotoCard

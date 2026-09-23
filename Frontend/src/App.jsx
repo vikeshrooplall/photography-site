@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Gallery from './components/Gallery'
-import ContactForm from './components/ContactForm'
+import Contact from './components/Contact'
 import Login from './components/Login'
 import Home from './components/Home'
 import About from './components/About'
@@ -18,7 +18,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
-        <Route path="/contact" element={<ContactForm />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/admin/login" element={<Login />} />
         <Route

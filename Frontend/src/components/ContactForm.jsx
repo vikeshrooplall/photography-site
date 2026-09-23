@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './ContactForm.css'
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -8,8 +9,8 @@ const ContactForm = () => {
     message: ''
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -17,20 +18,19 @@ const ContactForm = () => {
       ...formData,
       [name]: value
     })
-    if (error) setError(null)
+    if (errorMessage) setErrorMessage('')
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-
-    setError(null)
-    setLoading(true)
+    setErrorMessage('')
+    setIsLoading(true)
 
     try {
       const response = await fetch('http://localhost:3001/api/contacts', {
         method: 'POST',
         headers: {
-          'content-type': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       })
@@ -41,93 +41,134 @@ const ContactForm = () => {
       }
 
       setIsSubmitted(true)
+      setFormData({ name: '', email: '', phone: '', message: '' })
     } catch (err) {
-      setError(err.message)
-      console.error('Error submitting contact form:', err)
+      setErrorMessage(err.message || 'Something went wrong. Please try again.')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   const handleReset = () => {
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''
-    })
+    setFormData({ name: '', email: '', phone: '', message: '' })
     setIsSubmitted(false)
-    setError(null)
+    setErrorMessage('')
   }
 
-  return(
-    <div>
-        {isSubmitted ? (
-          <div>
-            <h2>Request submitted successfully!</h2>
-            <p>Thank you for your inquiry, <strong>{formData.name}</strong>!</p>
-            <p>We will revert back to you at <strong>{formData.email}</strong>.</p>
-            {formData.phone && <p> We will also call you at: {formData.phone}</p>}
-            <h4>Your Message:</h4>
-            <p>{formData.message}</p>
-            <button onClick={handleReset}>Send Another Request</button>
-          </div>
-        ) : (
-        <form onSubmit={handleSubmit}>
-          {error && <div style={{ color: 'red', marginBottom: '10px'}}>Error: {error}</div>}
-          <div>
+  return (
+    <div className="contact-form-card">
+
+      {isSubmitted ? (
+        <div className="contact-form-success">
+          <h3 className="contact-form-success-title">Inquiry Sent</h3>
+          <p className="contact-form-success-text">
+            Thank you — we'll be in touch soon.
+          </p>
+          <button
+            type="button"
+            className="contact-form-reset"
+            onClick={handleReset}
+          >
+            Send another inquiry
+          </button>
+        </div>
+      ) : (
+        <form className="contact-form" onSubmit={handleSubmit}>
+
+          {errorMessage && (
+            <div className="contact-form-error">{errorMessage}</div>
+          )}
+
+          <div className="contact-form-field">
+            <label htmlFor="contact-name" className="contact-form-label">
+              Name <span className="contact-form-required">*</span>
+            </label>
             <input
+              id="contact-name"
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Your name..."
+              placeholder="Your name"
               required
-              disabled={loading}
+              disabled={isLoading}
+              className="contact-form-input"
             />
           </div>
 
-          <div>
+          <div className="contact-form-field">
+            <label htmlFor="contact-email" className="contact-form-label">
+              Email <span className="contact-form-required">*</span>
+            </label>
             <input
+              id="contact-email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="your@email.com"
               required
-              disabled={loading}
+              disabled={isLoading}
+              className="contact-form-input"
             />
           </div>
 
-          <div>
+          <div className="contact-form-field">
+            <div className="contact-form-label-row">
+              <label htmlFor="contact-phone" className="contact-form-label">
+                Phone
+              </label>
+              <span className="contact-form-optional">Optional</span>
+            </div>
             <input
+              id="contact-phone"
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="Phone Number (optional)"
-              disabled={loading}
+              placeholder="+1 (555) 000-0000"
+              disabled={isLoading}
+              className="contact-form-input"
             />
           </div>
 
-          <div>
+          <div className="contact-form-field">
+            <label htmlFor="contact-message" className="contact-form-label">
+              Message <span className="contact-form-required">*</span>
+            </label>
             <textarea
+              id="contact-message"
               name="message"
               value={formData.message}
               onChange={handleChange}
-              placeholder="Tell us more about your requirements..."
+              placeholder="Tell us about your date, location, or creative ideas..."
               rows="6"
               required
-              disabled={loading}
+              disabled={isLoading}
+              className="contact-form-input contact-form-textarea"
             />
           </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Send Request'}
-          </button>
-        </form>
+          <div className="contact-form-submit-wrapper">
+            <button
+              type="submit"
+              className="contact-form-submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span>Sending...</span>
+              ) : (
+                <>
+                  <span>Send Inquiry</span>
+                  <span className="contact-form-submit-arrow">→</span>
+                </>
+              )}
+            </button>
+          </div>
 
-        )}
+        </form>
+      )}
+
     </div>
   )
 }
