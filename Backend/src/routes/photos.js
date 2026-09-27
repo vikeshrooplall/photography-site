@@ -9,7 +9,7 @@ router.get('/:id', photoController.getPhotoById)
 
 router.post('/', protect, photoController.createPhoto)
 router.post('/upload', protect, upload.single('image'), photoController.uploadPhoto)
-router.put('/:id', protect, photoController.updatePhoto)
+router.put('/:id', protect, upload.single('image'), photoController.updatePhoto)
 router.delete('/:id', protect, photoController.deletePhoto)
 
 module.exports = router

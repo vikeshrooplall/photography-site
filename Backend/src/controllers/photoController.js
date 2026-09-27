@@ -54,10 +54,16 @@ const updatePhoto = async (request, response) => {
     const { title, category, imageUrl, description } = request.body
     const photoId = request.params.id
 
-    if (!title || !category || !imageUrl) {
+    if (!title || !category) {
       request.status(400).json({
         error: 'Title, category and imageUrl are required!'
       })
+    }
+
+    let finalImageUrl = imageUrl
+
+    if (request.file) {
+      finalImageUrl = request.file.secure_url
     }
 
     const photo = await Photo.findByIdAndUpdate(
@@ -65,7 +71,7 @@ const updatePhoto = async (request, response) => {
       {
         title,
         category,
-        imageUrl,
+        imageUrl: finalImageUrl,
         description: description || ''
       },
       {
