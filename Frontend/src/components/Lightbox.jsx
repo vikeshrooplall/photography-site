@@ -71,9 +71,11 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
 
   if (!currentPhoto) return null
 
+  const hasActions = Boolean(actions)
+
   return (
     <div
-      className="lightbox"
+      className={`lightbox ${hasActions ? 'lightbox--with-actions' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Photo lightbox"
@@ -85,7 +87,7 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Close button — top right */}
+      {/* Close button */}
       <button
         ref={closeButtonRef}
         className="lightbox-close"
@@ -95,7 +97,7 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
         ✕
       </button>
 
-      {/* Previous arrow — desktop only */}
+      {/* Previous arrow */}
       <button
         className="lightbox-arrow lightbox-arrow--prev"
         onClick={() => onNavigate(-1)}
@@ -104,17 +106,35 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
         ‹
       </button>
 
-      {/* Image + actions column */}
+      {/* Image + caption */}
       <div
         className="lightbox-body"
         onClick={(e) => e.stopPropagation()}
       >
-        <img
-          src={currentPhoto.imageUrl}
-          alt={currentPhoto.title}
-          className="lightbox-image"
-          draggable={false}
-        />
+        <div className="lightbox-image-wrapper">
+          <img
+            src={currentPhoto.imageUrl}
+            alt={currentPhoto.title}
+            className="lightbox-image"
+            draggable={false}
+          />
+
+          {/* Caption overlay */}
+          {(currentPhoto.title || currentPhoto.category) && (
+            <div className="lightbox-caption">
+              {currentPhoto.title && (
+                <h2 className="lightbox-caption-title">
+                  {currentPhoto.title}
+                </h2>
+              )}
+              {currentPhoto.category && (
+                <p className="lightbox-caption-category">
+                  {currentPhoto.category}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
         {actions && (
           <div className="lightbox-actions">
@@ -123,7 +143,7 @@ const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
         )}
       </div>
 
-      {/* Next arrow — desktop only */}
+      {/* Next arrow */}
       <button
         className="lightbox-arrow lightbox-arrow--next"
         onClick={() => onNavigate(1)}
