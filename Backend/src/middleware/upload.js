@@ -8,7 +8,10 @@ const storage = new CloudinaryStorage({
   params: {
     folder: 'photography-website',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-    transformation: [{ quality: 'auto', fetch_format: 'auto'}]
+    transformation: [
+      { quality: 'auto', fetch_format: 'auto' },
+      { width: 1600, crop: 'limit' }
+    ]
   }
 })
 
