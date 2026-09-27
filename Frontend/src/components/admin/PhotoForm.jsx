@@ -24,7 +24,6 @@ const PhotoForm = ({
           accept="image/*"
           onChange={onFileChange}
           required={!isEditing}
-          disabled={formData._submitting}
           className="photo-form-input photo-form-input--file"
         />
         {isEditing && (
@@ -52,7 +51,6 @@ const PhotoForm = ({
           onChange={onInputChange}
           placeholder="Photo title"
           required
-          disabled={formData._submitting}
           className="photo-form-input"
         />
       </div>
@@ -68,7 +66,6 @@ const PhotoForm = ({
           value={formData.category}
           onChange={onInputChange}
           required
-          disabled={formData._submitting}
           className="photo-form-input"
         >
           <option value="">Select a category</option>
@@ -91,7 +88,6 @@ const PhotoForm = ({
           onChange={onInputChange}
           placeholder="Optional description"
           rows="3"
-          disabled={formData._submitting}
           className="photo-form-input photo-form-textarea"
         />
       </div>
@@ -102,14 +98,12 @@ const PhotoForm = ({
           type="button"
           className="photo-form-btn photo-form-btn--cancel"
           onClick={onCancel}
-          disabled={formData._submitting}
         >
           Cancel
         </button>
         <button
           type="submit"
           className="photo-form-btn photo-form-btn--submit"
-          disabled={formData._submitting}
         >
           {submitLabel}
         </button>

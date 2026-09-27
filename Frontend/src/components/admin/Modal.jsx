@@ -21,7 +21,6 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
     window.addEventListener('keydown', handleKeyDown)
 
-    // Focus the modal for keyboard users
     if (modalRef.current) {
       modalRef.current.focus()
     }
@@ -33,7 +32,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         previousFocus.focus()
       }
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   if (!isOpen) return null
 
