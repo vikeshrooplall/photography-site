@@ -8,6 +8,7 @@ const ContactForm = () => {
     phone: '',
     message: ''
   })
+  const [submittedData, setSubmittedData] = useState(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -40,6 +41,7 @@ const ContactForm = () => {
         throw new Error(errorData.error || 'Failed to submit request.')
       }
 
+      setSubmittedData({ ...formData })
       setIsSubmitted(true)
       setFormData({ name: '', email: '', phone: '', message: '' })
     } catch (err) {
@@ -51,6 +53,7 @@ const ContactForm = () => {
 
   const handleReset = () => {
     setFormData({ name: '', email: '', phone: '', message: '' })
+    setSubmittedData(null)
     setIsSubmitted(false)
     setErrorMessage('')
   }
@@ -62,8 +65,18 @@ const ContactForm = () => {
         <div className="contact-form-success">
           <h3 className="contact-form-success-title">Inquiry Sent</h3>
           <p className="contact-form-success-text">
-            Thank you — we'll be in touch soon.
+            Thank you, {submittedData?.name} - we'll be in touch soon.
           </p>
+
+          {submittedData?.message && (
+            <div className="contact-form-success-message">
+              <p className="contact-form-success-message-label">Your Message:</p>
+              <blockquote className="contact-form-success-message-quote">
+                "{submittedData.message}"
+              </blockquote>
+            </div>
+          )}
+
           <button
             type="button"
             className="contact-form-reset"
@@ -126,7 +139,7 @@ const ContactForm = () => {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="+1 (555) 000-0000"
+              placeholder="+230 5 000-0000"
               disabled={isLoading}
               className="contact-form-input"
             />
