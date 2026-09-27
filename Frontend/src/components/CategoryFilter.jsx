@@ -1,4 +1,4 @@
-import './CategoryFilter.css'
+import './styles/CategoryFilter.css'
 
 const CategoryFilter = ({ categories, selectedCategory, onSelect }) => {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)

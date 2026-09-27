@@ -1,4 +1,4 @@
-import './ContactListItem.css'
+import './styles/ContactListItem.css'
 
 const ContactListItem = ({ contact, onDelete, onMarkRead }) => {
   const formattedDate = new Date(contact.createdAt).toLocaleDateString('en-US', {

@@ -1,3 +1,5 @@
+import './styles/Logo.css'
+
 const Logo = ({ variant = 'dark', size = 'md', showWordmark = false }) => {
   const color = variant === 'light' ? '#F7F5F2' : '#061222'
   const wordmarkColor = variant === 'light' ? '#F7F5F2' : '#061222'

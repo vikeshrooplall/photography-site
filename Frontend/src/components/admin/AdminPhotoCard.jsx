@@ -1,4 +1,4 @@
-import './AdminPhotoCard.css'
+import './styles/AdminPhotoCard.css'
 
 const AdminPhotoCard = ({ photo, height, onView }) => {
   return (

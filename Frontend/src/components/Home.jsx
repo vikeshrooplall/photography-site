@@ -2,16 +2,18 @@ import { Link } from 'react-router-dom'
 import { useData } from '../context/DataContext'
 import Hero from './Hero'
 import Marquee from './Marquee'
-import './Home.css'
+import './styles/Home.css'
 
 const Home = () => {
   const { photos } = useData()
 
-  // One photo per category
   const categories = ['weddings', 'portraits', 'nature', 'commercials']
-  const featuredPhotos = categories
-    .map(category => photos.find(photo => photo.category === category))
-    .filter(Boolean)
+
+  // One entry per category — photo may be null
+  const featuredItems = categories.map(category => ({
+    category,
+    photo: photos.find(photo => photo.category === category) || null
+  }))
 
   return (
     <div className="home">
@@ -31,10 +33,26 @@ const Home = () => {
       {/* ===== FEATURED WORK ===== */}
       <section className="featured">
         <div className="featured-grid">
-          {featuredPhotos.length === 0 ? (
-            <p className="featured-empty">No photos available yet.</p>
-          ) : (
-            featuredPhotos.map(photo => (
+          {featuredItems.map(({ category, photo }) => {
+            // If this category has no photo → placeholder
+            if (!photo) {
+              return (
+                <div
+                  key={category}
+                  className="featured-card featured-card--placeholder"
+                >
+                  <h3 className="featured-card-label">{category}</h3>
+                  <div className="featured-card-image featured-card-image--placeholder">
+                    <span className="featured-card-placeholder-text">
+                      Coming soon
+                    </span>
+                  </div>
+                </div>
+              )
+            }
+
+            // If we have a photo → real card
+            return (
               <Link
                 key={photo._id}
                 to={`/gallery?category=${photo.category}`}
@@ -45,8 +63,8 @@ const Home = () => {
                   <img src={photo.imageUrl} alt={photo.title} />
                 </div>
               </Link>
-            ))
-          )}
+            )
+          })}
         </div>
         <Link to="/gallery" className="featured-link">
           View Full Gallery →

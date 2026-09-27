@@ -11,23 +11,25 @@
    ============================================================ */
 .featured {
   width: 100%;
-  /* padding: 5rem 1.5rem; */
   background-color: var(--color-cream-bg);
   text-align: center;
 }
 
 .featured-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
   max-width: 80rem;
-  margin: 0 auto 4rem;
+  margin: 0 auto 2rem;
 }
 
+/* Shared card styles (real + placeholder) */
 .featured-card {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
+  height: 100%;
   text-decoration: none;
   cursor: pointer;
 }
@@ -39,7 +41,7 @@
   text-transform: uppercase;
   letter-spacing: var(--tracking-display);
   color: var(--color-deep-navy);
-  margin-bottom: 0.875rem;
+  margin-bottom: 2rem;
   transition: color 0.2s ease;
 }
 
@@ -54,6 +56,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 .featured-card:hover .featured-card-image {
@@ -94,6 +97,33 @@
 }
 
 /* ============================================================
+   FEATURED — PLACEHOLDER
+   ============================================================ */
+.featured-card--placeholder {
+  cursor: default;
+  pointer-events: none;
+}
+
+.featured-card-image--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-cream-bg);
+  border: 1px dashed rgba(122, 138, 153, 0.4);
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.featured-card-placeholder-text {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-muted-text);
+}
+
+/* ============================================================
    INTRODUCTION
    ============================================================ */
 .intro {
@@ -110,7 +140,6 @@
   font-size: 0.9rem;
   color: var(--color-deep-navy);
   line-height: 1.7;
-  text-align: center;
 }
 
 .intro-signature {
@@ -198,12 +227,8 @@
    RESPONSIVE
    ============================================================ */
 @media (min-width: 640px) {
-  .featured {
-    /* padding: 6rem 2rem; */
-  }
-
   .featured-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .intro {
@@ -233,7 +258,6 @@
 
 @media (min-width: 1024px) {
   .featured-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

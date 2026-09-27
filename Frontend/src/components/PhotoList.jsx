@@ -1,5 +1,5 @@
 import PhotoCard from './PhotoCard'
-import './PhotoList.css'
+import './styles/PhotoList.css'
 
 const HEIGHTS = [510, 450, 370, 660, 490, 620, 430, 510, 580, 420]
 

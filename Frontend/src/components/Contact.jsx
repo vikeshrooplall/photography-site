@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import Hero from './Hero'
 import ContactInfo from './ContactInfo'
 import ContactForm from './ContactForm'
-import './Contact.css'
+import './styles/Contact.css'
 
 const Contact = () => {
   return (

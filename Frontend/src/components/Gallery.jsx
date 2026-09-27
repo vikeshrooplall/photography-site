@@ -5,7 +5,7 @@ import Hero from './Hero'
 import CategoryFilter from './CategoryFilter'
 import PhotoList from './PhotoList'
 import Lightbox from './Lightbox'
-import './Gallery.css'
+import './styles/Gallery.css'
 
 const Gallery = () => {
   const { photos, loading, errorMessage } = useData()

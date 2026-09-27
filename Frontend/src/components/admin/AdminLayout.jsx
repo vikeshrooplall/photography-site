@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
-import './AdminLayout.css'
+import './styles/AdminLayout.css'
 
 const AdminLayout = () => {
   const { unreadCount, errorMessage, successMessage } = useData()

@@ -1,4 +1,4 @@
-import './PhotoForm.css'
+import './styles/PhotoForm.css'
 
 const PhotoForm = ({
   formData,

@@ -1,4 +1,4 @@
-import './Hero.css'
+import './styles/Hero.css'
 
 const Hero = ({ imageUrl, title, subtitle, children, size= 'full' }) => {
   return (

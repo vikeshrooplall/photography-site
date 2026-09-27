@@ -1,4 +1,4 @@
-import './PhotoCard.css'
+import './styles/PhotoCard.css'
 
 const PhotoCard = ({ photo, height, onClick }) => {
   return (

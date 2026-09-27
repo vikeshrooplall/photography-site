@@ -5,7 +5,7 @@ import PhotoForm from './PhotoForm'
 import Modal from './Modal'
 import AdminPhotoCard from './AdminPhotoCard'
 import Lightbox from '../Lightbox'
-import './PhotoManager.css'
+import './styles/PhotoManager.css'
 
 const HEIGHTS = [510, 450, 370, 660, 490, 620, 430, 510, 580, 420]
 

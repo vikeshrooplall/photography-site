@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import './Lightbox.css'
+import './styles/Lightbox.css'
 
 const Lightbox = ({ photos, currentIndex, onClose, onNavigate, actions }) => {
   const closeButtonRef = useRef(null)

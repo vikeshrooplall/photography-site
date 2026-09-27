@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useData } from '../context/DataContext'
 import Logo from './Logo'
-import './Navigation.css'
+import './styles/Navigation.css'
 
 const Navigation = () => {
   const location = useLocation()

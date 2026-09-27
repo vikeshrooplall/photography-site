@@ -1,6 +1,6 @@
 import { useData } from '../../context/DataContext'
 import ContactListItem from './ContactListItem'
-import './ContactManager.css'
+import './styles/ContactManager.css'
 
 const ContactManager = () => {
   const {

@@ -1,5 +1,5 @@
 import Logo from './Logo'
-import './Marquee.css'
+import './styles/Marquee.css'
 
 const Marquee = () => {
   // Repeating content block — duplicated for seamless loop
