@@ -113,7 +113,7 @@ const uploadPhoto = async (request, response) => {
       })
     }
 
-    const imageUrl = request.file.path
+    const imageUrl = request.file.secure_url
 
     const photo = await Photo.create({
       title,
